@@ -10,7 +10,8 @@ class anniversary_recompletion extends \core\task\scheduled_task {
     }
 
     public function execute(): void {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/local/recompletion/locallib.php');
 
         // ── 1. Find users whose anniversary (month/day) is today ────────────────
         // Leap-year edge case: Feb 29 anniversaries fire on Feb 28 in non-leap years.
