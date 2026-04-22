@@ -106,7 +106,7 @@ class anniversary_recompletion extends \core\task\scheduled_task {
             }
 
             $activejobs = array_map(
-                fn($r) => substr($r->shortname, strlen('dsp_job_')),
+                fn($r) => $r->shortname,
                 $activejobrecords
             );
 
