@@ -121,15 +121,15 @@ class anniversary_recompletion extends \core\task\scheduled_task {
                     continue;
                 }
 
-                $config = $DB->get_record('local_recompletion_config', ['courseid' => $course->id]);
-                if (!$config) {
-                    mtrace("  course {$course->id}: no local_recompletion config, skipping.");
-                    continue;
-                }
-
                 try {
-                    \local_recompletion\check_recompletion::reset_user($user->id, $course, $config);
-                    mtrace("  reset user {$user->id} in course {$course->id}.");
+                    // reset_user() fetches its own config when null is passed.
+                    $recompletiontask = new \local_recompletion\task\check_recompletion();
+                    $errors = $recompletiontask->reset_user($user->id, $course);
+                    if (!empty($errors)) {
+                        mtrace("  skipped user {$user->id} in course {$course->id}: " . implode(', ', $errors));
+                    } else {
+                        mtrace("  reset user {$user->id} in course {$course->id}.");
+                    }
                 } catch (\Throwable $e) {
                     mtrace("  ERROR resetting user {$user->id} in course {$course->id}: " . $e->getMessage());
                 }
